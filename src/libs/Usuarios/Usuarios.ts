@@ -3,7 +3,7 @@ export interface IUsuario {
     correo: string;
     nombre: string;
     password: string;
-    roles: string[];
+    roles?: string[];
     created?: Date;
     ultimoAcceso?: Date;
     observacion?: string;
@@ -47,6 +47,20 @@ export class Usuarios{
             })
             this.usuarios = newUser;
             return updated;
+        }
+
+        delete(codigo: string){
+            const UserToDelete = this.usuarios.find((usu)=>{
+                return usu.codigo === codigo;
+            });
+            if (UserToDelete){
+                const newUsers: IUsuario[] = this.usuarios.filter((usu)=> {
+                    return usu.codigo !== codigo;
+                });
+                this.usuarios = newUsers;
+                return true;
+            }
+            return false;
         }
      
 }

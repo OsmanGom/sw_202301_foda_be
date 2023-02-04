@@ -82,9 +82,5 @@ router.delete('/del/:id', (req, res)=>{
     return res.status(404).json({"error": "No se pudo eliminar Empresa"})
 });
 
-/* 
-router.get('/_', function(_req, res)=> {
 
-});
-*/
 export default router;

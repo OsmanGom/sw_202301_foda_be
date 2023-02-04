@@ -1,6 +1,7 @@
 import express from 'express';
 const router  = express.Router(); //se exporta hacia la raiz de la aplicacion 
-import empresasRouter from './empresas/empresas';
+import usuariosRouter from './usuarios/usuarios'
+//import empresasRouter from './empresas/empresas';
 
 // REST API
 // Internet -> HTTP -> REST API -> DB
@@ -23,7 +24,8 @@ router.get('/', (_req, res) => {
   res.json(jsonResp);
  });
 
- router.use('/empresas',empresasRouter);
+ router.use('/usuarios',usuariosRouter);
+ //router.use('/empresas',empresasRouter);
 
 //router.get router.post router.put router.delete router.use
 
