@@ -24,7 +24,7 @@ export class Usuarios{
             });
             return UsuarioToReturn;
         }
-
+ 
         add(nuevoUsuario : IUsuario){
             const nuevo :IUsuario = {
                 ...nuevoUsuario, codigo: (Math.random()*1000).toString() + new Date().getTime().toString(),
