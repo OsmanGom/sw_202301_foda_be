@@ -3,7 +3,7 @@ export interface IUsuario {
     correo: string;
     nombre: string;
     password: string;
-    roles?: string[];
+    roles?: string;
     created?: Date;
     ultimoAcceso?: Date;
     observacion?: string;
@@ -28,7 +28,6 @@ export class Usuarios{
         add(nuevoUsuario : IUsuario){
             const nuevo :IUsuario = {
                 ...nuevoUsuario, codigo: (Math.random()*1000).toString() + new Date().getTime().toString(),
-                roles: ['ADM'],
                 created: new Date(),
                 ultimoAcceso: new Date()
             }

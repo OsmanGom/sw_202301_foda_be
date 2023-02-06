@@ -8,7 +8,7 @@ usersModel.add({
     correo: 'admin@unicah.edu',
     nombre: 'Admin',
     password: 'Admin1234_',
-    roles: ['ADM'],
+    roles: 'Admin',
     created: undefined,
     ultimoAcceso: undefined
 });
@@ -37,55 +37,40 @@ router.get('/byid/:id', (req, res)=> {
     return res.status(404).json({"error": " No se encontro el registro"});
 });
 
-router.post('/new', (_req, res)=> {
-    console.log("Usuarios /new request body:");
-    const {
-        correo = 'admin@unicah.edu',
-        nombre = 'Admin',
-        password =  'Admin1234_',
-       
-    } = _req.body;
+router.post('/new', (req, res) =>{
+    const {correo, nombre, password, roles } = req.body;
+    const newUsuario:IUsuario ={
+        codigo: '',
+        correo: correo,
+        nombre: nombre,
+        password: password,
+        roles: roles
+    }
+    if(usersModel.add(newUsuario)){
+        return res.status(200).json({"created": true});    
+    }
+    return res.status(404).json({
+        "error": "Error al agregar un nuevo usuario"
+    });
+});
 
-    const newUser_: IUsuario = {
-        codigo: "",
+
+router.put('/upd/:id', (req, res) =>{
+    const { id }  = req.params;
+    const {correo, nombre, password, roles } = req.body;
+    
+    const UpdateUsuario: IUsuario = {
+        codigo: id,
         correo,
         nombre,
         password,
-     
-    };
-    if (usersModel.add(newUser_)){
-        return res.status(200).json({"created": true})
+        roles
     }
-    return res.status(404).json({"error": "Error al agregar un Usuario"});
-});
 
-router.put('/upd/:id', (req, res)=> {
-    const { id } = req.params;
-    const { 
-        correo = 'admin@unicah.edu',
-        nombre = 'Admin',
-        password =  'Admin1234_',
-        roles=['ADM']
-          } = req.body; 
-        const UpdateUser : IUsuario = {
-            codigo: id,
-            correo,
-            nombre,
-            password,
-            roles: [],
-        };
-        if(usersModel.update(UpdateUser)){
-            res.status(200).json({"updated": true});
-        }
-    return res.status(404).json({"error": "Error al actualizar el usuario"});
-});
-
-router.delete('/del/:id', (req, res)=>{
-    const {id:codigo} = req.params;
-    if(usersModel.delete(codigo)){
-        res.status(200).json({"deleted":true})
+    if(usersModel.update(UpdateUsuario)){
+        return res.status(200).json({"Update": true});
     }
-    return res.status(404).json({"error": "No se pudo eliminar Usuario"})
+    return res.status(404).json({"Error": "Error Actualizar"});
 });
 
 export default router;
