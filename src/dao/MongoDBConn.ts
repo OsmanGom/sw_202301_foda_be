@@ -7,9 +7,7 @@ const mongoDBName = process.env.MONGO_DB_NAME || 'sw202301';
 export class MongoDBConn implements IDBConnection{
     static connection:MongoClient = null;
     private constructor(){}
-    getConnection() {
-        throw new Error("Method not implemented.");
-    }
+    
     public static async getConnection(){
         if(!this.connection){
             this.connection = await MongoClient.connect(mongoURI);

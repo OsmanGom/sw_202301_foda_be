@@ -24,8 +24,15 @@ export abstract class MongoDAOBase<T> implements IDataAccessObject{
         return this.collection.insertOne(newEntity as OptionalUnlessRequiredId<T>);
 
     };
-    update: Function;
-    delete: Function;
+    update(id: string, updateEntity: Partial<T>){
+        const _id = new ObjectId(id) as Filter<T>;
+        const updateObj = {"$set":updateEntity};
+        return this.collection.updateOne({_id}, updateObj);
+    };
+    delete(id:string){
+        const _id = new ObjectId(id) as Filter<T>;
+        return this.collection.deleteOne({_id});
+    };
     findByFilter: Function;
     findOneByFilter: Function;
     aggregate: Function;

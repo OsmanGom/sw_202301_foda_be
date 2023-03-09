@@ -1,9 +1,11 @@
 import express from 'express';
 const router = express.Router();
-import { Empresas , IEmpresa} from '@libs/Empresas/Empresas';
+import { Empresas } from '@libs/Empresas/Empresas';
+import { EmpresasDao } from '@server/dao/models/Empresas/EmpresasDAO';
+import { MongoDBConn } from '@server/dao/mongoDBConn';
+import { IEmpresa } from '@server/dao/models/Empresas/IEmpresas';
 
-
-const empresasModel = new Empresas();
+const empresasModel = new Empresas(new EmpresasDao(MongoDBConn));
 empresasModel.add({
     codigo: '',
     nombre: 'Mi empresa',
@@ -24,16 +26,16 @@ router.get('/', (_req, res)=> {
     res.status(200).json(jsonUrls);
 });
 
-router.get('/all', (_req, res)=> {
-    res.status(200).json(empresasModel.getAll());
+router.get('/all', async (_req, res)=> {
+    res.status(200).json(await empresasModel.getAll());
     
 });
 
-router.get('/byid/:id', (req, res)=> {
+router.get('/byid/:id', async(req, res)=> {
     const {id: codigo} = req.params;
     const empresa = empresasModel.getByid(codigo);
     if(empresa){
-        return res.status(200).json(empresa);
+        return res.status(200).json( empresa);
     }
     return res.status(404).json({"error": " No se encontro el registro"});
 });
@@ -56,27 +58,35 @@ router.post('/new', (_req, res)=> {
     return res.status(404).json({"error": "Error al agregar una nueva empresa"});
 });
 
-router.put('/upd/:id', (req, res)=> {
+router.put('/upd/:id', async(req, res)=> {
     const { id } = req.params;
-    const { nombre = "John Doe Corp",
-            status = "Activo",
-            observacion = ""
+    const { nombre = "----NotRecieved-----",
+            status = "----NotRecieved-----",
+            observacion = "", 
+            codigo = ""
           } = req.body; 
+
+          if (nombre === "----NotRecieved-----"|| status === "----NotRecieved-----"){
+            return res.status(403).json({"error":"Debe venir el nombre y estatus correctos"});
+          }
+
+
         const UpdateEmpresa : IEmpresa = {
-            codigo: id,
+            codigo,
             nombre,
             status,
             observacion
         };
-        if(empresasModel.update(UpdateEmpresa)){
+        if(await empresasModel.update(id,UpdateEmpresa)){
             res.status(200).json({"updated": true});
         }
     return res.status(404).json({"error": "Error al actualizar la empresa"});
 });
 
-router.delete('/del/:id', (req, res)=>{
-    const {id:codigo} = req.params;
-    if(empresasModel.delete(codigo)){
+router.delete('/del/:id', async(req, res)=>{
+
+    const {id} = req.params;
+    if(await empresasModel.delete(id)){
         res.status(200).json({"deleted":true})
     }
     return res.status(404).json({"error": "No se pudo eliminar Empresa"})
